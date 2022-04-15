@@ -47,6 +47,13 @@ Parameters:
     Type: String
     Description: A boolean to determine if you want to output debug messages in the CloudWatch console
     Default: "false"
+  Architecture:
+    Type: String
+    Description: Architecture for the Lambda runtime
+    Default: 'x86_64'
+    AllowedValues:
+      - 'x86_64'
+      - 'arm64'
 
 Conditions:
   NoRole: !Equals ['', !Ref FunctionRole]
@@ -82,6 +89,7 @@ Resources:
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${FunctionRole}
       Timeout:
         Ref: Timeout
+      Architectures: !Split [",", !Ref Architecture]
       Environment:
         Variables:
           LICENSE_KEY: !Ref NRLicenseKey

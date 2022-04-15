@@ -5,6 +5,7 @@ provider:
   runtime: python3.7
   stage: production
   timeout: 30
+  architecture: ${env:NR_LAMBDA_ARCHITECTURE, "x86_64"}
 
   # Uncomment this line to use your own IAM role
   #role: arn:aws:iam::YourAccountNumber:role/YourIamRole

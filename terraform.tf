@@ -86,6 +86,17 @@ variable "tags" {
   default     = {}
 }
 
+variable "lambda_architecture" {
+  type        = string
+  description = "Architecture for the Lambda runtime"
+  default     = "x86_64"
+
+  validation {
+    condition     = contains(["x86_64", "arm64"], var.lambda_architecture)
+    error_message = "lambda_architecture must be 'x86_64' or 'arm64'"
+  }
+}
+
 data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 data "aws_region" "current" {}
@@ -182,11 +193,12 @@ resource "aws_lambda_function" "ingestion_function" {
     ? var.function_role
     : aws_iam_role.lambda_role.0.arn
   )
-  runtime     = "python3.7"
-  filename    = local.archive_name
-  handler     = "function.lambda_handler"
-  memory_size = var.memory_size
-  timeout     = var.timeout
+  runtime       = "python3.7"
+  filename      = local.archive_name
+  handler       = "function.lambda_handler"
+  memory_size   = var.memory_size
+  timeout       = var.timeout
+  architectures = [var.lambda_architecture]
 
   environment {
     variables = {
